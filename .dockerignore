@@ -6,8 +6,12 @@
 # Documentation
 README.md
 README-DOCKER.md
+README-PORTAINER.md
 
 # Docker
 Dockerfile
 docker-compose.yml
+docker-compose.portainer.yml
 .dockerignore
+.env.example
+.env

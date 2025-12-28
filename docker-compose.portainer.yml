@@ -1,0 +1,37 @@
+version: '3.8'
+
+services:
+  textarea:
+    build:
+      context: https://github.com/derdg1/textarea.git#claude/self-hosting-setup-vOYPN
+      dockerfile: Dockerfile
+    container_name: textarea
+    restart: unless-stopped
+    networks:
+      - textarea-network
+    healthcheck:
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost/"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+    labels:
+      - "com.centurylinklabs.watchtower.enable=true"
+
+  cloudflared:
+    image: cloudflare/cloudflared:latest
+    container_name: textarea-cloudflared
+    restart: unless-stopped
+    command: tunnel run
+    environment:
+      - TUNNEL_TOKEN=${CLOUDFLARE_TUNNEL_TOKEN}
+    networks:
+      - textarea-network
+    depends_on:
+      - textarea
+    labels:
+      - "com.centurylinklabs.watchtower.enable=true"
+
+networks:
+  textarea-network:
+    driver: bridge
